@@ -1,0 +1,36 @@
+cmake_minimum_required(VERSION 3.23)
+set(CMAKE_CXX_STANDARD 17)
+
+project(Chess)
+
+
+add_subdirectory(dependencies/glfw)
+
+file(GLOB_RECURSE VENDOR_SRC "vendor/*.hpp" "vendor/*.cpp" "vendor/*.h")
+file(GLOB_RECURSE CORE_SRC "src/Core/*.cpp" "src/Core/*.h")
+file(GLOB_RECURSE CHESS_SRC "src/Chess/*.cpp" "src/Chess/*.h")
+file(GLOB_RECURSE DEBUG_SRC "src/Debug/*.cpp" "src/Debug/*.h")
+
+add_executable(${PROJECT_NAME} 
+  src/Main.cpp
+	dependencies/glad/src/glad.c
+  ${VENDOR_SRC}
+  ${CORE_SRC}
+  ${CHESS_SRC}
+  ${DEBUG_SRC}
+)
+
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC dependencies/glfw/include
+  PUBLIC dependencies/glad/include
+  private vendor/
+  private src/
+)
+
+target_link_directories(${PROJECT_NAME} PRIVATE dependencies/glfw/src)
+target_link_libraries(${PROJECT_NAME} glfw)
+
+if(apple)
+  target_link_libraries(${PROJECT_NAME} "-framework OpenGL")
+endif()
